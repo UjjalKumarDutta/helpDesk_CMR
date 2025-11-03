@@ -1,3 +1,2 @@
-MONGO_URI=mongodb+srv://ujjalkumar051_db_user:1GGtt0FJlEU7R8fT@helpdeskcluster.24kxfcw.mongodb.net/?appName=helpdeskCluster
-PORT=5000
-JWT_SECRET=supersecretkey123
+.env
+node_modules/
