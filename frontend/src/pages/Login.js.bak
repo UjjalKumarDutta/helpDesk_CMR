@@ -1,0 +1,61 @@
+import { useState } from "react";
+import axios from "../api/axios";
+import useAuth from "../auth/useAuth";
+import { useNavigate } from "react-router-dom";
+
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  // --- Email validation ---
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    setError("Please enter a valid email address");
+    return;
+  }
+
+  // --- Password validation (min 6 characters) ---
+  if (password.length < 6) {
+    setError("Password must be at least 6 characters");
+    return;
+  }
+
+  try {
+    // call backend login (your existing axios setup)
+    const res = await axios.post("/auth/login", { email, password });
+
+    // Save user & token using your auth context function
+    login(res.data.user, res.data.token);
+
+    // redirect to dashboard
+    navigate("/");
+  } catch (err) {
+    setError(err.response?.data?.message || "Login failed");
+  }
+};
+
+
+  return (
+    <div style={styles.container}>
+      <h2>Login</h2>
+
+      {error && <p style={styles.error}>{error}</p>}
+
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          type="email"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={styles.input}
+          required
+        />
+        {error.toLowerCase().includes("email") && <p style={styles.error}>{error}</p>}
